@@ -1,74 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-
-interface Todo {
-  id: number;
-  title: string;
-  isCompleted: boolean;
-}
-
-const Todo = ({
-  todo,
-  onDeleteClick,
-  onCheckboxChange,
-}: {
-  todo: Todo;
-  onDeleteClick: (id: number) => void;
-  onCheckboxChange: (id: number) => void;
-}) => {
-  return (
-    <li className='flex justify-between items-center mt-4 bg-gray-100 p-4 rounded-lg shadow-sm'>
-      <label className='flex items-center'>
-        <input
-          type='checkbox'
-          className='mr-2'
-          checked={todo.isCompleted}
-          onChange={() => onCheckboxChange(todo.id)}
-        />
-        <span className={todo.isCompleted ? 'line-through text-gray-400' : ''}>
-          {todo.title}
-        </span>
-      </label>
-      <button
-        onClick={() => onDeleteClick(todo.id)}
-        className='bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600'
-      >
-        Del
-      </button>
-    </li>
-  );
-};
-
-const AddForm = ({ onSubmit }: { onSubmit: (title: string) => void }) => {
-  const [title, setTitle] = useState<string>('');
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSubmit(title);
-    setTitle('');
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className='flex gap-2 mt-4'>
-      <input
-        type='text'
-        value={title}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setTitle(e.currentTarget.value)
-        }
-        className='flex-1 p-2 border border-gray-300 rounded shadow-sm'
-        placeholder='Add a new todo'
-      />
-      <button
-        type='submit'
-        className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
-      >
-        Add
-      </button>
-    </form>
-  );
-};
+import React, { useState, useEffect } from 'react';
+import { Todo } from '../../types/todo';
+import TodoList from '../../components/TodoList';
+import AddForm from '../../components/AddForm';
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -120,16 +55,11 @@ export default function Home() {
           Purge
         </button>
       </h1>
-      <ul className='mt-4'>
-        {todos.map((todo) => (
-          <Todo
-            key={todo.id}
-            todo={todo}
-            onDeleteClick={handleTodoDeleteClick}
-            onCheckboxChange={handleTodoCheckboxChange}
-          />
-        ))}
-      </ul>
+      <TodoList
+        todos={todos}
+        onDeleteClick={handleTodoDeleteClick}
+        onCheckboxChange={handleTodoCheckboxChange}
+      />
       <AddForm onSubmit={handleAddFormSubmit} />
     </div>
   );
